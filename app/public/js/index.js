@@ -1,4 +1,5 @@
 const indexModule = (() => {
+	// 現在のパスを取得する。
 	const path = window.location.pathname
 
 	switch (path) {
@@ -7,7 +8,6 @@ const indexModule = (() => {
 			document.getElementById('search-btn').addEventListener('click', () => {
 				return searchModule.searchUsers()
 			})
-
 			//userModuleのfetchAllUsersを呼び出す
 			return usersModule.fetchAllUsers()
 
@@ -20,6 +20,7 @@ const indexModule = (() => {
 				return (window.location.href = '/')
 			})
 			break
+
 		case '/edit.html':
 			const uid = window.location.search.split('?uid=')[1]
 			document.getElementById('save-btn').addEventListener('click', () => {

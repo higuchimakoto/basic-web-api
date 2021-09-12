@@ -13,6 +13,7 @@ app.use(bodyParser.json())
 // publicディレクトリを静的ファイル群のルートディレクトリとして設定
 app.use(express.static(path.join(__dirname, 'public')))
 
+
 // Get All Users
 app.get('/api/v1/users', (req, res) => {
 	// データベース接続
@@ -42,11 +43,32 @@ app.get('/api/v1/users/:id', (req, res) => {
 	db.close()
 })
 
+// Get following Users
+app.get('/api/v1/users/:id/following', (req, res) => {
+	// データベース接続
+	const db = new sqlite3.Database(dbPath)
+	const id = req.params.id
+
+	db.all(
+		`SELECT * FROM following LEFT JOIN users ON following.followed_id = users.id WHERE following_id = ${id};`,
+		(err, rows) => {
+			if (!rows) {
+				res.status(404).send({ error: 'user not found' })
+			} else {
+				res.status(200).json(rows)
+			}
+		}
+	)
+
+	db.close()
+})
+
 // Search Users matching keyword
 app.get('/api/v1/search', (req, res) => {
 	// データベース接続
 	const db = new sqlite3.Database(dbPath)
 	const keyword = req.query.q
+  console.log('👉 keyword', keyword)
 
 	db.all(`SELECT * FROM users WHERE name LIKE "%${keyword}%"`, (err, rows) => {
 		res.json(rows)
@@ -69,6 +91,7 @@ const run = async (sql, db) => {
 
 // Create a new user
 app.post('/api/v1/users', async (req, res) => {
+	console.log(req.body);
 	if (!req.body.name || req.body.name === '') {
 		res.status(400).send({ error: 'ユーザー名が指定されていません' })
 	} else {
@@ -88,7 +111,6 @@ app.post('/api/v1/users', async (req, res) => {
 		} catch (e) {
 			res.status(500).send({ error: e })
 		}
-
 		db.close()
 	}
 })

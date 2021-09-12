@@ -60,21 +60,26 @@ const usersModule = (() => {
 		},
 
 		createUser: async () => {
+			console.log('処理開始');
 			const name = document.getElementById('name').value
 			const profile = document.getElementById('profile').value
 			const dateOfBirth = document.getElementById('date-of-birth').value
 
 			// リクエスト
+			console.log('リクエストbodyを作成します。');
 			const body = { name: name, profile: profile, date_of_birth: dateOfBirth }
 
+			console.log('通信を開始してレスポンス結果を待ちます。');
 			const res = await fetch(BASE_URL, {
 				method: 'POST',
 				headers: headers,
 				body: JSON.stringify(body), //javascriptのオブジェクトをjson文字列に変換
 			})
+      console.log('👉 res', res)
 
 			return handleError(res)
 		},
+
 		setExistingValue: async (uid) => {
 			const res = await fetch(BASE_URL + '/' + uid)
 			const resJson = await res.json()
@@ -85,6 +90,7 @@ const usersModule = (() => {
 		},
 
 		saveUser: async (uid) => {
+			console.log('保存ボタンが押されました。');
 			const name = document.getElementById('name').value
 			const profile = document.getElementById('profile').value
 			const dateOfBirth = document.getElementById('date-of-birth').value
