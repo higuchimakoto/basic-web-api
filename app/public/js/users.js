@@ -6,6 +6,36 @@ const usersModule = (() => {
 	// リクエストのbodyにjsonを渡すと伝える。
 	headers.set('Content-Type', 'application/json')
 
+	const handleError = async (res) => {
+		const resJson = await res.json()
+
+		switch (res.status) {
+			case 200:
+				alert(resJson.message)
+				window.location.href = '/'
+				break
+			case 201:
+				alert(resJson.message)
+				window.location.href = '/'
+				break
+			case 400:
+				// リクエストのパラメータ間違い
+				alert(resJson.error)
+				break
+			case 404:
+				// 指定したリソースが見つからない。
+				alert(resJson.error)
+				break
+			case 500:
+				// サーバーの内部エラー
+				alert(resJson.error)
+				break
+			default:
+				alert('なんらかのエラーが発生しました。')
+				break
+		}
+	}
+
 	// 即時関数なのでこのモジュールが読み込まれたタイミングで実行されるメソッドを定義
 	return {
 		fetchAllUsers: async () => {
@@ -43,10 +73,7 @@ const usersModule = (() => {
 				body: JSON.stringify(body), //javascriptのオブジェクトをjson文字列に変換
 			})
 
-			const resJson = await res.json()
-
-			alert(resJson.message)
-			window.location.href = '/'
+			return handleError(res)
 		},
 		setExistingValue: async (uid) => {
 			const res = await fetch(BASE_URL + '/' + uid)
@@ -71,10 +98,7 @@ const usersModule = (() => {
 				body: JSON.stringify(body), //javascriptのオブジェクトをjson文字列に変換
 			})
 
-			const resJson = await res.json()
-
-			alert(resJson.message)
-			window.location.href = '/'
+			return handleError(res)
 		},
 
 		deleteUser: async (uid) => {
@@ -87,11 +111,7 @@ const usersModule = (() => {
 					method: 'DELETE',
 					headers: headers,
 				})
-
-				const resJson = await res.json()
-
-				alert(resJson.message)
-				window.location.href = '/'
+				return handleError(res)
 			}
 		},
 	}
